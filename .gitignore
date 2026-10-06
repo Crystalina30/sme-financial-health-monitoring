@@ -1,0 +1,46 @@
+# ---- Secrets -------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ---- Python --------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+*.sqlite3
+
+# ---- Node / frontend -----------------------------------------------------
+node_modules/
+dist/
+.vite/
+coverage/
+npm-debug.log*
+
+# ---- Editors / OS --------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Project documents (kept locally, not in the repository) -------------
+# Proposal documents, reference images and sample reports live in this
+# folder but are not part of the software deliverable.
+*.pdf
+*.docx
+*.png
+*.zip
+Sample/
+SME_Financial_Health_FYP_Development_Plan.md
+FYP_Advanced_Additions.md
+FYP_Advanced_Additions_v2.md
+Structure proposal.txt
