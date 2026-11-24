@@ -1,8 +1,11 @@
 """FastAPI application entry point."""
 
 import logging
+import math
 
 from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -13,7 +16,9 @@ from app.api.routes import (
     financial_records,
     health,
     indicators,
+    organisation,
     thresholds,
+    trial_balance,
 )
 from app.core.config import settings
 
@@ -50,6 +55,31 @@ app.add_middleware(
 )
 
 
+def _json_safe(value):
+    """Infinity and NaN cannot be written as JSON; report them as text."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return str(value)
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    """The standard 422 response, safe for inputs such as Infinity or NaN.
+
+    FastAPI echoes each invalid input back; a non-finite number cannot be
+    serialised as JSON, which would otherwise turn a clear 422 into a 500.
+    """
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": _json_safe(jsonable_encoder(exc.errors(), custom_encoder={
+            float: lambda v: v if math.isfinite(v) else str(v)}))},
+    )
+
+
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Return a generic error, logging the detail rather than exposing it.
@@ -66,11 +96,13 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
 for router in (
     health.router,
     auth.router,
+    organisation.router,
     companies.router,
     financial_records.router,
     indicators.router,
     dashboard.router,
     thresholds.router,
+    trial_balance.router,
 ):
     app.include_router(router, prefix=settings.api_prefix)
 

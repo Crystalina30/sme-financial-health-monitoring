@@ -1,0 +1,30 @@
+Account code,Account name,Debit,Credit
+1000,Maybank current account,115000.00,0.00
+1010,Petty cash,5000.00,0.00
+1100,Trade debtors,190000.00,0.00
+1110,Allowance for doubtful debts,0.00,10000.00
+1200,Stock,150000.00,0.00
+1300,Prepayments,20000.00,0.00
+1500,Motor vehicles,400000.00,0.00
+1510,Office equipment,330000.00,0.00
+1520,Accumulated depreciation,0.00,100000.00
+2000,Trade creditors,0.00,240000.00
+2010,Accruals,0.00,30000.00
+2020,SST payable,0.00,30000.00
+2500,Term loan,0.00,300000.00
+3000,Share capital,0.00,300000.00
+3100,Retained earnings,0.00,98000.00
+4000,Sales,0.00,1250000.00
+4010,Sales returns,50000.00,0.00
+4900,Interest received,0.00,2000.00
+5000,Opening stock,140000.00,0.00
+5010,Purchases,760000.00,0.00
+5020,Carriage inwards,30000.00,0.00
+5090,Closing stock,0.00,150000.00
+6000,Salaries and wages,150000.00,0.00
+6010,Rent,60000.00,0.00
+6020,Utilities,20000.00,0.00
+6030,Depreciation,30000.00,0.00
+7000,Interest on term loan,30000.00,0.00
+8000,Income tax,30000.00,0.00
+,Total,2510000.00,2510000.00

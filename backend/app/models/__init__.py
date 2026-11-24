@@ -6,8 +6,11 @@ Alembic relies on for autogeneration.
 
 from app.models.company import Company, ReportingPeriod
 from app.models.financial_record import FinancialRecord
+from app.models.audit import AuditEvent
+from app.models.membership import OrganisationInvitation, OrganisationMember
 from app.models.results import FinancialHealthScore, IndicatorResult
 from app.models.threshold import ThresholdConfiguration
+from app.models.trial_balance import TrialBalanceLine
 from app.models.user import User
 
 __all__ = [
@@ -15,7 +18,11 @@ __all__ = [
     "FinancialHealthScore",
     "FinancialRecord",
     "IndicatorResult",
+    "AuditEvent",
+    "OrganisationInvitation",
+    "OrganisationMember",
     "ReportingPeriod",
     "ThresholdConfiguration",
+    "TrialBalanceLine",
     "User",
 ]

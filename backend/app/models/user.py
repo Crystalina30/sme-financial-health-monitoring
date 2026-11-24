@@ -13,7 +13,7 @@ def _utcnow() -> datetime:
 
 
 class User(Base):
-    """An authenticated user. Owns one or more companies."""
+    """An authenticated user. Owns one organisation (see Company.is_primary)."""
 
     __tablename__ = "users"
 

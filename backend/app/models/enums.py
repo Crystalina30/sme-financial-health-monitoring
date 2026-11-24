@@ -49,6 +49,18 @@ class HealthClassification(str, Enum):
     SOUND = "sound"
     VULNERABLE = "vulnerable"
     DISTRESSED = "distressed"
+    # No indicator could be scored, so there is nothing to classify. This is
+    # a statement about the data, not about the company's health.
+    INSUFFICIENT_DATA = "insufficient_data"
+
+
+class AssessmentStatus(str, Enum):
+    """How far an assessment can be relied on. Separate from the health
+    classification: it describes the data, not the company."""
+
+    VALIDATED = "validated"
+    PROVISIONAL = "provisional"
+    INSUFFICIENT_DATA = "insufficient_data"
 
 
 class AttentionReason(str, Enum):

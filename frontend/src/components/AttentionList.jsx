@@ -1,4 +1,11 @@
 import { ATTENTION_LABELS } from '../utils/format.js';
+import Icon from './Icon.jsx';
+
+const REASON_ICONS = {
+  distress_breach: 'cross',
+  concern_breach: 'alert',
+  unfavourable_movement: 'trendDown',
+};
 
 /**
  * Indicators requiring attention, in priority order.
@@ -22,8 +29,13 @@ export default function AttentionList({ attention }) {
     <ol className="attention-list">
       {flagged.map((item) => (
         <li key={item.code} className={`attention-item attention-${item.reason}`}>
-          <span className="attention-name">{item.display_name}</span>
-          <span className="attention-reason">{ATTENTION_LABELS[item.reason]}</span>
+          <span className="attention-icon">
+            <Icon name={REASON_ICONS[item.reason]} />
+          </span>
+          <span>
+            <span className="attention-name">{item.display_name}</span>
+            <span className="attention-reason">{ATTENTION_LABELS[item.reason]}</span>
+          </span>
         </li>
       ))}
     </ol>

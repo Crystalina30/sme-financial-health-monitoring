@@ -42,6 +42,10 @@ class ReportingPeriodCreateRequest(BaseModel):
         return self
 
 
+class ReportingPeriodUpdateRequest(ReportingPeriodCreateRequest):
+    """A corrected label and dates for an existing period (all three are sent)."""
+
+
 class ReportingPeriodResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

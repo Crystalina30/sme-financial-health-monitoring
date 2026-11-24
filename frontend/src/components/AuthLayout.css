@@ -3,6 +3,9 @@
    Everything here is scoped to .auth-page and prefixed auth-, so none of
    it reaches the dashboard or the global form styles in styles.css. Global
    rules such as `input:focus` are outranked by two-class selectors.
+
+   Colours come in two themes. Light is the default; html[data-theme='dark']
+   switches to dark. The theme only changes the tokens below, never the layout.
    --------------------------------------------------------------------------- */
 .auth-page {
     --auth-navy: #142d4e;
@@ -10,12 +13,36 @@
     --auth-offwhite: #f5f7fa;
     --auth-white: #ffffff;
 
-    --auth-navy-deep: color-mix(in srgb, var(--auth-navy) 55%, #000);
-    --auth-teal-light: color-mix(in srgb, var(--auth-teal) 62%, var(--auth-white));
-    --auth-input-bg: color-mix(in srgb, var(--auth-navy) 86%, var(--auth-white));
-    --auth-text-soft: rgba(245, 247, 250, 0.72);
-    --auth-text-faint: rgba(245, 247, 250, 0.5);
-    --auth-danger: #f28b7f;
+    /* Light theme */
+    --auth-bg: radial-gradient(ellipse at 50% 45%, #ffffff 0%, #e7edf4 75%);
+    --auth-text: var(--auth-navy);
+    --auth-heading: var(--auth-navy);
+    --auth-text-soft: rgba(20, 45, 78, 0.72);
+    --auth-text-faint: rgba(20, 45, 78, 0.55);
+    /* Accent for text, icons and focus rings: dark enough for 4.5:1 on white. */
+    --auth-accent: #0b7d6e;
+    --auth-input-bg: #ffffff;
+    --auth-input-text: var(--auth-navy);
+    --auth-control-frame: rgba(20, 45, 78, 0.16);
+    --auth-toggle-hover-bg: rgba(20, 45, 78, 0.06);
+    --auth-card-bg: rgba(255, 255, 255, 0.72);
+    --auth-card-border: rgba(20, 45, 78, 0.1);
+    --auth-card-shadow:
+        0 30px 80px rgba(20, 45, 78, 0.16),
+        0 0 70px rgba(15, 157, 138, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    --auth-danger: #c8333f;
+    --auth-danger-bg: rgba(200, 51, 63, 0.08);
+    --auth-danger-border: rgba(200, 51, 63, 0.35);
+    --auth-danger-frame: rgba(200, 51, 63, 0.7);
+    /* The panel stays a deep teal-to-navy block in both themes. */
+    --auth-panel-bg:
+        radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.16), transparent 55%),
+        linear-gradient(150deg, #0f9d8a 0%, #11587a 60%, #142d4e 100%);
+    --auth-panel-title: #ffffff;
+    --auth-panel-name: rgba(255, 255, 255, 0.88);
+    --auth-panel-text: rgba(255, 255, 255, 0.8);
+
     --auth-radius: 16px;
     --auth-control-radius: 10px;
 
@@ -26,9 +53,41 @@
     place-items: center;
     padding: 40px 24px;
     overflow: hidden;
-    background: radial-gradient(ellipse at 50% 45%, var(--auth-navy) 0%, var(--auth-navy-deep) 75%);
-    color: var(--auth-offwhite);
+    background: var(--auth-bg);
+    color: var(--auth-text);
     font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark theme: the original sign-in colours. */
+html[data-theme='dark'] .auth-page {
+    --auth-navy-deep: color-mix(in srgb, var(--auth-navy) 55%, #000);
+    --auth-bg: radial-gradient(ellipse at 50% 45%, var(--auth-navy) 0%, var(--auth-navy-deep) 75%);
+    --auth-text: var(--auth-offwhite);
+    --auth-heading: var(--auth-white);
+    --auth-text-soft: rgba(245, 247, 250, 0.72);
+    --auth-text-faint: rgba(245, 247, 250, 0.5);
+    --auth-accent: color-mix(in srgb, var(--auth-teal) 62%, var(--auth-white));
+    --auth-input-bg: color-mix(in srgb, var(--auth-navy) 86%, var(--auth-white));
+    --auth-input-text: var(--auth-white);
+    --auth-control-frame: rgba(255, 255, 255, 0.14);
+    --auth-toggle-hover-bg: rgba(255, 255, 255, 0.06);
+    --auth-card-bg: rgba(255, 255, 255, 0.06);
+    --auth-card-border: rgba(255, 255, 255, 0.12);
+    --auth-card-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.45),
+        0 0 70px rgba(15, 157, 138, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    --auth-danger: #f28b7f;
+    --auth-danger-bg: rgba(242, 139, 127, 0.12);
+    --auth-danger-border: rgba(242, 139, 127, 0.45);
+    --auth-danger-frame: rgba(242, 139, 127, 0.75);
+    --auth-panel-bg:
+        radial-gradient(circle at 80% 15%, rgba(15, 157, 138, 0.35), transparent 55%),
+        linear-gradient(150deg, rgba(15, 157, 138, 0.22), rgba(255, 255, 255, 0.05));
+    --auth-panel-title: var(--auth-white);
+    --auth-panel-name: var(--auth-accent);
+    --auth-panel-text: var(--auth-text-soft);
 }
 
 .auth-sr-only {
@@ -77,7 +136,7 @@
 
 .auth-stage {
     position: relative;
-    width: min(880px, 100%);
+    width: min(920px, 100%);
     /* The entrance lives here, not on the card, so the card's error shake
      does not replay it. */
     animation: auth-card-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -143,7 +202,7 @@
     width: 140px;
     height: 2px;
     margin-top: -1px;
-    background: linear-gradient(90deg, transparent, var(--auth-teal-light), transparent);
+    background: linear-gradient(90deg, transparent, var(--auth-accent), transparent);
     animation: auth-pulse-from-left 4.4s ease-in var(--auth-delay, 0s) infinite both;
 }
 
@@ -158,7 +217,7 @@
     height: 7px;
     margin-top: -3.5px;
     border-radius: 50%;
-    background: var(--auth-teal-light);
+    background: var(--auth-accent);
     box-shadow: 0 0 10px 2px rgba(15, 157, 138, 0.75);
     animation: auth-dot 2.4s ease-in-out var(--auth-delay, 0s) infinite;
 }
@@ -176,23 +235,20 @@
    --------------------------------------------------------------------------- */
 .auth-frame {
     /* How far the panel's diagonal edge reaches into the form column. The
-       form reserves this much space on its right so nothing runs under it. */
+       form reserves this much space on its right, so nothing runs under it. */
     --auth-slant: 72px;
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     min-height: 460px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--auth-card-border);
     border-radius: var(--auth-radius);
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--auth-card-bg);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.45),
-        0 0 70px rgba(15, 157, 138, 0.16),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    box-shadow: var(--auth-card-shadow);
 }
 
 .auth-frame.is-shaking {
@@ -206,7 +262,27 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    grid-row: 1;
+    /* Sign-in sits in the left column; each form keeps clear of the diagonal
+       on the side where the panel rests next to it. */
+    grid-column: 1;
     padding: 48px calc(var(--auth-slant) + 28px) 48px 44px;
+    /* Hiding: fade out quickly as the panel arrives, then leave the tab order. */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+/* Showing: the panel is see-through, so wait for it to clear the way. */
+.auth-form.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.35s ease 0.42s, visibility 0s;
+}
+
+.auth-form--register {
+    grid-column: 2;
+    padding: 48px 44px 48px calc(var(--auth-slant) + 28px);
 }
 
 .auth-reveal {
@@ -216,19 +292,24 @@
 
 .auth-page .auth-title {
     margin: 0 0 28px;
-    color: var(--auth-white);
+    color: var(--auth-heading);
     font-size: 1.85rem;
     font-weight: 600;
     text-align: center;
     letter-spacing: 0.01em;
 }
 
+/* Focused by script when the form slides in; never reached by Tab. */
+.auth-page .auth-title:focus {
+    outline: none;
+}
+
 .auth-alert {
     margin: -8px 0 18px;
     padding: 10px 14px;
-    border: 1px solid rgba(242, 139, 127, 0.45);
+    border: 1px solid var(--auth-danger-border);
     border-radius: var(--auth-control-radius);
-    background: rgba(242, 139, 127, 0.12);
+    background: var(--auth-danger-bg);
     color: var(--auth-danger);
     font-size: 0.85rem;
     line-height: 1.45;
@@ -247,7 +328,7 @@
     overflow: hidden;
     padding: 1px;
     border-radius: var(--auth-control-radius);
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--auth-control-frame);
     transition: background-color 0.25s, box-shadow 0.25s;
 }
 
@@ -260,9 +341,9 @@
     width: 150%;
     aspect-ratio: 1;
     background: conic-gradient(transparent 0 28%,
-            var(--auth-teal-light) 42%,
+            var(--auth-accent) 42%,
             transparent 50% 78%,
-            var(--auth-teal-light) 92%,
+            var(--auth-accent) 92%,
             transparent 100%);
     opacity: 0;
     transform: translate(-50%, -50%);
@@ -280,7 +361,7 @@
 }
 
 .auth-control.is-invalid {
-    background: rgba(242, 139, 127, 0.75);
+    background: var(--auth-danger-frame);
 }
 
 .auth-control-inner {
@@ -301,7 +382,7 @@
 }
 
 .auth-control:focus-within .auth-icon {
-    color: var(--auth-teal-light);
+    color: var(--auth-accent);
 }
 
 .auth-page svg {
@@ -320,7 +401,7 @@
     border: 0;
     border-radius: calc(var(--auth-control-radius) - 1px);
     background: transparent;
-    color: var(--auth-white);
+    color: var(--auth-input-text);
     font: inherit;
     font-size: 0.92rem;
 }
@@ -340,8 +421,8 @@
 
 .auth-page .auth-input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 100px var(--auth-input-bg) inset;
-    -webkit-text-fill-color: var(--auth-white);
-    caret-color: var(--auth-white);
+    -webkit-text-fill-color: var(--auth-input-text);
+    caret-color: var(--auth-input-text);
 }
 
 .auth-toggle {
@@ -361,12 +442,12 @@
 }
 
 .auth-toggle:hover {
-    color: var(--auth-white);
-    background: rgba(255, 255, 255, 0.06);
+    color: var(--auth-input-text);
+    background: var(--auth-toggle-hover-bg);
 }
 
 .auth-toggle:focus-visible {
-    outline: 2px solid var(--auth-teal-light);
+    outline: 2px solid var(--auth-accent);
     outline-offset: 0;
 }
 
@@ -435,7 +516,7 @@
 }
 
 .auth-submit:focus-visible {
-    outline: 2px solid var(--auth-white);
+    outline: 2px solid var(--auth-heading);
     outline-offset: 3px;
 }
 
@@ -461,7 +542,7 @@
 }
 
 .auth-switch a {
-    color: var(--auth-teal-light);
+    color: var(--auth-accent);
     font-weight: 600;
     text-decoration: none;
     border-radius: 4px;
@@ -472,59 +553,71 @@
 }
 
 .auth-switch a:focus-visible {
-    outline: 2px solid var(--auth-teal-light);
+    outline: 2px solid var(--auth-accent);
     outline-offset: 2px;
 }
 
 /* ---------------------------------------------------------------------------
-   Welcome panel, cut on a diagonal like the reference
+   Welcome panel, cut on a diagonal like the reference. It rests on the right
+   for sign-in and slides straight across to the left for registration, and
+   back again. It is one rigid parallelogram a slant wider than it looks on
+   each side, so its far edge always sits past the card's rim and only its
+   position animates: the diagonal keeps its angle all the way across.
    --------------------------------------------------------------------------- */
 .auth-panel {
+    --auth-panel-clip: polygon(var(--auth-slant) 0, 100% 0, calc(100% - var(--auth-slant)) 100%, 0 100%);
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    left: var(--auth-panel-rest);
+    width: calc(50% + var(--auth-slant) * 2);
+    padding: 48px calc(var(--auth-slant) + 36px);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: calc(var(--auth-slant) * -1);
-    padding: 48px 44px 48px calc(var(--auth-slant) + 40px);
-    background:
-        radial-gradient(circle at 80% 15%, rgba(15, 157, 138, 0.35), transparent 55%),
-        linear-gradient(150deg, rgba(15, 157, 138, 0.22), rgba(255, 255, 255, 0.05));
-    clip-path: polygon(var(--auth-slant) 0, 100% 0, 100% 100%, 0 100%);
+    background: var(--auth-panel-bg);
+    color: var(--auth-panel-title);
+    clip-path: var(--auth-panel-clip);
     animation: auth-panel-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s both;
+    transition: left 0.75s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.auth-panel-content {
+.auth-panel--login {
+    --auth-panel-rest: calc(50% - var(--auth-slant));
+    --auth-panel-clip-from: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+}
+
+.auth-panel--register {
+    --auth-panel-rest: calc(var(--auth-slant) * -1);
+    --auth-panel-clip-from: polygon(0 0, 0 0, 0 100%, 0 100%);
+}
+
+.auth-panel-inner {
+    width: 100%;
     text-align: center;
     animation: auth-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.65s both;
 }
 
-.auth-page .auth-brand-mark {
-    width: 52px;
-    height: 52px;
-    margin-bottom: 18px;
-    stroke-width: 2;
+/* The two sets of wording share one grid cell and crossfade mid-slide. */
+.auth-panel-copy {
+    display: grid;
 }
 
-.auth-brand-mark rect {
-    stroke: rgba(255, 255, 255, 0.25);
-    fill: rgba(20, 45, 78, 0.35);
+.auth-panel-content {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transition: opacity 0.25s ease;
 }
 
-.auth-brand-bars {
-    stroke: var(--auth-text-faint);
-    stroke-width: 3;
-}
-
-.auth-brand-line {
-    stroke: var(--auth-teal-light);
-    stroke-width: 2.4;
-    stroke-dasharray: 40;
-    stroke-dashoffset: 40;
-    animation: auth-draw 1.2s ease-out 1s forwards;
+.auth-panel-content.is-active {
+    opacity: 1;
+    transition: opacity 0.35s ease 0.3s;
 }
 
 .auth-page .auth-panel-title {
     margin: 0 0 10px;
-    color: var(--auth-white);
+    color: var(--auth-panel-title);
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.15;
@@ -534,7 +627,7 @@
 
 .auth-panel-name {
     margin: 0 0 8px;
-    color: var(--auth-teal-light);
+    color: var(--auth-panel-name);
     font-size: 0.92rem;
     font-weight: 500;
 }
@@ -542,7 +635,7 @@
 .auth-panel-text {
     max-width: 280px;
     margin: 0 auto;
-    color: var(--auth-text-soft);
+    color: var(--auth-panel-text);
     font-size: 0.86rem;
     line-height: 1.6;
 }
@@ -563,8 +656,12 @@
         padding: 40px calc(var(--auth-slant) + 22px) 40px 32px;
     }
 
+    .auth-form--register {
+        padding: 40px 32px 40px calc(var(--auth-slant) + 22px);
+    }
+
     .auth-panel {
-        padding-right: 32px;
+        padding: 40px calc(var(--auth-slant) + 24px);
     }
 
     .auth-page .auth-panel-title {
@@ -594,19 +691,17 @@
         min-height: 0;
     }
 
-    /* The panel becomes a banner above the form with an angled lower edge. */
+    /* The panel becomes a banner above the form with an angled lower edge, so
+       there is no room to slide: the wording crossfades and the new form rises
+       in underneath it. */
     .auth-panel {
-        order: -1;
-        margin-left: 0;
+        --auth-panel-clip: polygon(0 0, 100% 0, 100% calc(100% - 28px), 0 100%);
+        --auth-panel-clip-from: polygon(0 0, 100% 0, 100% 0, 0 0);
+        --auth-panel-rest: 0%;
+        position: relative;
+        width: auto;
         padding: 30px 24px 48px;
-        clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), 0 100%);
-        animation-name: auth-panel-in-stacked;
-    }
-
-    .auth-page .auth-brand-mark {
-        width: 42px;
-        height: 42px;
-        margin-bottom: 10px;
+        grid-row: 1;
     }
 
     .auth-page .auth-panel-title {
@@ -617,8 +712,17 @@
         display: none;
     }
 
+    /* The forms differ in height, so only the active one takes up space. */
     .auth-form {
+        display: none;
+        grid-column: 1;
+        grid-row: 2;
         padding: 12px 24px 32px;
+    }
+
+    .auth-form.is-active {
+        display: flex;
+        animation: auth-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }
 
     .auth-page .auth-title {
@@ -666,23 +770,10 @@
     }
 }
 
+/* No `to` frame: it ends on the panel's own clip-path. */
 @keyframes auth-panel-in {
     from {
-        clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
-    }
-
-    to {
-        clip-path: polygon(var(--auth-slant) 0, 100% 0, 100% 100%, 0 100%);
-    }
-}
-
-@keyframes auth-panel-in-stacked {
-    from {
-        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-    }
-
-    to {
-        clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), 0 100%);
+        clip-path: var(--auth-panel-clip-from);
     }
 }
 
@@ -780,12 +871,6 @@
     }
 }
 
-@keyframes auth-draw {
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
 
     .auth-page *,
@@ -793,10 +878,6 @@
     .auth-page *::after {
         animation: none !important;
         transition: none !important;
-    }
-
-    .auth-brand-line {
-        stroke-dashoffset: 0;
     }
 
     .auth-trace-line::after {
