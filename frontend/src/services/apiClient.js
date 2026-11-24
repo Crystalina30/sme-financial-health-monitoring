@@ -62,25 +62,89 @@ export async function apiRequest(path, { method = 'GET', body, auth = true } = {
   return payload;
 }
 
+/** Send a file as multipart form data, with the same error handling. */
+export async function apiUpload(path, file) {
+  const headers = {};
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const body = new FormData();
+  body.append('file', file);
+  const response = await fetch(`${BASE_URL}/api${path}`, { method: 'POST', headers, body });
+  let payload = null;
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+  if (!response.ok) {
+    const error = new Error(describeError(payload, response.status));
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
 export const api = {
   register: (data) => apiRequest('/auth/register', { method: 'POST', body: data, auth: false }),
   login: (data) => apiRequest('/auth/login', { method: 'POST', body: data, auth: false }),
   me: () => apiRequest('/auth/me'),
 
-  listCompanies: () => apiRequest('/companies'),
-  createCompany: (data) => apiRequest('/companies', { method: 'POST', body: data }),
+  // The account's one organisation (an SME), and its overview.
+  getOrganisation: () => apiRequest('/organisation'),
+  setUpOrganisation: (data) => apiRequest('/organisation', { method: 'POST', body: data }),
+  selectOrganisation: (companyId) =>
+    apiRequest('/organisation/select', { method: 'POST', body: { company_id: companyId } }),
+  getOverview: () => apiRequest('/organisation/overview'),
+  listMembers: () => apiRequest('/organisation/members'),
+  listInvitations: () => apiRequest('/organisation/invitations'),
+  createInvitation: (data) => apiRequest('/organisation/invitations', { method: 'POST', body: data }),
+  revokeInvitation: (id) => apiRequest(`/organisation/invitations/${id}`, { method: 'DELETE' }),
+  previewInvitation: (token) =>
+    apiRequest(`/organisation/invitations/preview?token=${encodeURIComponent(token)}`),
+  acceptInvitation: (token) =>
+    apiRequest('/organisation/invitations/accept', { method: 'POST', body: { token } }),
+  getAuditLog: () => apiRequest('/organisation/audit-log?limit=100'),
+  updateMember: (id, role) =>
+    apiRequest(`/organisation/members/${id}`, { method: 'PATCH', body: { role } }),
+  removeMember: (id) => apiRequest(`/organisation/members/${id}`, { method: 'DELETE' }),
+
   getCompany: (id) => apiRequest(`/companies/${id}`),
   updateCompany: (id, data) => apiRequest(`/companies/${id}`, { method: 'PUT', body: data }),
 
   listPeriods: (companyId) => apiRequest(`/companies/${companyId}/reporting-periods`),
   createPeriod: (companyId, data) =>
     apiRequest(`/companies/${companyId}/reporting-periods`, { method: 'POST', body: data }),
+  updatePeriod: (companyId, periodId, data) =>
+    apiRequest(`/companies/${companyId}/reporting-periods/${periodId}`, {
+      method: 'PUT',
+      body: data,
+    }),
+  // The period must be named, so a wrong id cannot delete the wrong period.
+  deletePeriod: (companyId, periodId, label) =>
+    apiRequest(
+      `/companies/${companyId}/reporting-periods/${periodId}?confirm_label=${encodeURIComponent(label)}`,
+      { method: 'DELETE' },
+    ),
 
   listRecords: (companyId) => apiRequest(`/companies/${companyId}/financial-records`),
   createRecord: (companyId, data) =>
     apiRequest(`/companies/${companyId}/financial-records`, { method: 'POST', body: data }),
   updateRecord: (recordId, data) =>
     apiRequest(`/financial-records/${recordId}`, { method: 'PUT', body: data }),
+
+  listAccountCategories: () => apiRequest('/trial-balance/categories'),
+  previewTrialBalance: (lines) =>
+    apiRequest('/trial-balance/preview', { method: 'POST', body: { lines } }),
+  suggestCategories: (companyId, lines) =>
+    apiRequest(`/companies/${companyId}/trial-balance/suggest`, {
+      method: 'POST',
+      body: { lines },
+    }),
+  submitTrialBalance: (companyId, data) =>
+    apiRequest(`/companies/${companyId}/trial-balance`, { method: 'POST', body: data }),
+  getTrialBalance: (recordId) => apiRequest(`/financial-records/${recordId}/trial-balance`),
+  importTrialBalance: (companyId, file) =>
+    apiUpload(`/companies/${companyId}/trial-balance/import`, file),
 
   getIndicators: (companyId, periodId) =>
     apiRequest(`/companies/${companyId}/indicators/${periodId}`),

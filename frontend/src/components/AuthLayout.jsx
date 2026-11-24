@@ -1,3 +1,4 @@
+import ThemeToggle from './ThemeToggle.jsx';
 import './AuthLayout.css';
 
 // Decorative glowing lines that run in from the screen edges to the card.
@@ -8,20 +9,24 @@ const TRACES = [
   { side: 'right', row: 2 },
 ];
 
-function BrandMark() {
-  return (
-    <svg className="auth-brand-mark" viewBox="0 0 48 48" aria-hidden="true">
-      <rect x="1.5" y="1.5" width="45" height="45" rx="12" />
-      <path className="auth-brand-bars" d="M14 34v-6M22 34V22M30 34v-9M38 34V16" />
-      <path className="auth-brand-line" d="M12 24l9-7 8 5 10-9" />
-    </svg>
-  );
-}
+const PANEL_COPY = {
+  login: {
+    title: 'Welcome back',
+    text: 'Track liquidity, profitability, solvency and efficiency in one place.',
+  },
+  register: {
+    title: 'Get started',
+    text: 'Create an account to set up your organisation and assess its financial health.',
+  },
+};
 
 /**
- * Shared frame for the sign-in and registration pages
+ * Shared frame for the sign-in and registration pages. Both forms stay in the
+ * card as children, side by side, and `mode` decides which one the panel
+ * leaves uncovered: it sits over the registration form while signing in, and
+ * slides across to sit over the sign-in form while registering.
  */
-export default function AuthLayout({ panelTitle, panelText, isShaking, onShakeEnd, children }) {
+export default function AuthLayout({ mode, isShaking, onShakeEnd, children }) {
   function handleAnimationEnd(event) {
     if (event.animationName === 'auth-shake') onShakeEnd();
   }
@@ -32,6 +37,8 @@ export default function AuthLayout({ panelTitle, panelText, isShaking, onShakeEn
         <span className="auth-glow auth-glow--a" />
         <span className="auth-glow auth-glow--b" />
       </div>
+
+      <ThemeToggle className="auth-theme-toggle" />
 
       <main className="auth-stage">
         <div className="auth-traces" aria-hidden="true">
@@ -49,12 +56,26 @@ export default function AuthLayout({ panelTitle, panelText, isShaking, onShakeEn
         >
           {children}
 
-          <aside className="auth-panel" aria-label="About this application">
-            <div className="auth-panel-content">
-              <BrandMark />
-              <h2 className="auth-panel-title">{panelTitle}</h2>
-              <p className="auth-panel-name">SME Financial Health Dashboard</p>
-              <p className="auth-panel-text">{panelText}</p>
+          <aside
+            className={`auth-panel auth-panel--${mode}`}
+            aria-label="About this application"
+          >
+            <div className="auth-panel-inner">
+              <div className="auth-panel-copy">
+                {Object.entries(PANEL_COPY).map(([copyMode, { title, text }]) => (
+                  <div
+                    key={copyMode}
+                    className={`auth-panel-content auth-panel-content--${copyMode}${
+                      copyMode === mode ? ' is-active' : ''
+                    }`}
+                    aria-hidden={copyMode !== mode}
+                  >
+                    <h2 className="auth-panel-title">{title}</h2>
+                    <p className="auth-panel-name">SME Financial Health Dashboard</p>
+                    <p className="auth-panel-text">{text}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </aside>
         </div>

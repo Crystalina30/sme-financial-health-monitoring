@@ -1,6 +1,12 @@
 import ReactECharts from 'echarts-for-react';
 
-import { axisDefaults, baseGrid, baseTextStyle, SERIES_COLOUR } from './chartTheme.js';
+import { baseGrid, useChartTheme } from './chartTheme.js';
+
+const STATUS_LABELS = {
+  validated: 'Validated',
+  provisional: 'Provisional',
+  insufficient_data: 'Insufficient data',
+};
 
 /**
  * Overall financial health score across reporting periods.
@@ -9,33 +15,60 @@ import { axisDefaults, baseGrid, baseTextStyle, SERIES_COLOUR } from './chartThe
  * band is readable from the chart without consulting a legend.
  */
 export default function HealthScoreTrendChart({ trend }) {
+  const { colours, textStyle, tooltip, referenceLine, axis } = useChartTheme();
+
   const option = {
-    textStyle: baseTextStyle,
+    textStyle,
     grid: baseGrid,
     tooltip: {
+      ...tooltip,
       trigger: 'axis',
-      valueFormatter: (value) => (value === null ? 'N/A' : value.toFixed(1)),
+      formatter: (params) => {
+        const point = trend[params[0].dataIndex];
+        const score = point.overall_score === null ? 'N/A' : point.overall_score.toFixed(1);
+        return `${point.period_label}<br/>Score ${score} · ${STATUS_LABELS[point.assessment_status] || ''}`;
+      },
     },
     xAxis: {
       type: 'category',
       data: trend.map((point) => point.period_label),
-      ...axisDefaults(),
+      ...axis(),
       splitLine: { show: false },
     },
-    yAxis: { type: 'value', min: 0, max: 100, ...axisDefaults('Overall score') },
+    yAxis: { type: 'value', min: 0, max: 100, ...axis('Overall score') },
     series: [
       {
         type: 'line',
-        data: trend.map((point) => point.overall_score),
+        // A provisional score is not a validated observation: drawn hollow.
+        data: trend.map((point) =>
+          point.assessment_status === 'validated'
+            ? point.overall_score
+            : {
+                value: point.overall_score,
+                symbol: 'emptyCircle',
+                symbolSize: 11,
+                itemStyle: { color: colours.status.concern, borderColor: colours.status.concern },
+              },
+        ),
         smooth: false,
-        symbolSize: 7,
-        lineStyle: { width: 2, color: SERIES_COLOUR },
-        itemStyle: { color: SERIES_COLOUR },
+        symbolSize: 8,
+        lineStyle: { width: 2, color: colours.series },
+        itemStyle: { color: colours.series, borderColor: colours.markRing, borderWidth: 2 },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: colours.seriesFill },
+              { offset: 1, color: 'rgba(15, 157, 138, 0)' },
+            ],
+          },
+        },
         markLine: {
-          silent: true,
-          symbol: 'none',
-          label: { formatter: '{b}', fontSize: 10, color: '#7a8599' },
-          lineStyle: { type: 'dashed', color: '#c9d2e0' },
+          ...referenceLine,
           data: [
             { yAxis: 60, name: 'Sound' },
             { yAxis: 40, name: 'Vulnerable' },

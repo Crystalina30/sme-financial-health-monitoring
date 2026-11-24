@@ -2,7 +2,16 @@
 
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Date, DateTime, ForeignKey, String, UniqueConstraint
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    String,
+    UniqueConstraint,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -13,9 +22,26 @@ def _utcnow() -> datetime:
 
 
 class Company(Base):
-    """An SME belonging to exactly one user."""
+    """An SME: the organisation an account belongs to.
+
+    Each account has one organisation. ``is_primary`` marks it, and a partial
+    unique index allows at most one primary company per owner, so the rule is
+    enforced by the database and not only by the API. Companies that are not
+    primary are kept (never deleted) but cannot be opened through the API;
+    they exist only for accounts that held several companies before the
+    single-organisation change, until the owner chooses one.
+    """
 
     __tablename__ = "companies"
+    __table_args__ = (
+        Index(
+            "uq_companies_one_organisation_per_owner",
+            "owner_id",
+            unique=True,
+            postgresql_where=text("is_primary"),
+            sqlite_where=text("is_primary"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     owner_id: Mapped[int] = mapped_column(
@@ -25,6 +51,9 @@ class Company(Base):
     registration_number: Mapped[str | None] = mapped_column(String(100))
     industry: Mapped[str | None] = mapped_column(String(120))
     currency_code: Mapped[str] = mapped_column(String(3), default="MYR", nullable=False)
+    is_primary: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=text("false")
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     owner: Mapped["User"] = relationship(back_populates="companies")  # noqa: F821

@@ -44,3 +44,6 @@ SME_Financial_Health_FYP_Development_Plan.md
 FYP_Advanced_Additions.md
 FYP_Advanced_Additions_v2.md
 Structure proposal.txt
+
+# ---- Release archives (scripts/make_source_zip.py) -----------------------
+release/

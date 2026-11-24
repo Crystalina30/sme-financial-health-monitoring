@@ -3,6 +3,9 @@
 Thresholds are stored in the database rather than hard-coded, so that they can
 be updated without changing application code, and so that the documented
 source of each threshold is preserved and can be shown to the user.
+
+Each indicator has four reference points: floor (score 0), distress threshold
+(40), concern threshold (60) and target (100). See scoring_service.py.
 """
 
 from sqlalchemy import Boolean, Float, String
@@ -12,7 +15,7 @@ from app.core.database import Base
 
 
 class ThresholdConfiguration(Base):
-    """Concern and distress thresholds for one indicator."""
+    """Reference points and their documented basis for one indicator."""
 
     __tablename__ = "threshold_configurations"
 
@@ -24,6 +27,10 @@ class ThresholdConfiguration(Base):
     direction: Mapped[str] = mapped_column(String(20), nullable=False)
     concern_threshold: Mapped[float] = mapped_column(Float, nullable=False)
     distress_threshold: Mapped[float] = mapped_column(Float, nullable=False)
+    floor_value: Mapped[float] = mapped_column(Float, nullable=False)
+    target_value: Mapped[float] = mapped_column(Float, nullable=False)
+    # Whether each value is definitional, conventional or project-defined.
+    basis: Mapped[str | None] = mapped_column(String(500))
     # Reference for the threshold value, displayed alongside the indicator.
     source_reference: Mapped[str] = mapped_column(String(500), nullable=False)
     description: Mapped[str] = mapped_column(String(1000), nullable=False)

@@ -5,6 +5,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SME Financial Health Dashboard</title>
+  <script>
+    // Apply the saved theme before anything is drawn, so the page never
+    // flashes the wrong one. Light unless dark was chosen; see ThemeContext.jsx.
+    (function () {
+      var theme = 'light';
+      try {
+        if (localStorage.getItem('fyp_theme') === 'dark') theme = 'dark';
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" />

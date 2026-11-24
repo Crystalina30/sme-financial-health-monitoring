@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_owned_company, get_owned_period
+from app.api.dependencies import get_admin_company, get_owned_period
 from app.core.database import get_db
 from app.models.company import Company
 from app.schemas.assessment import AssessmentResponse
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/companies", tags=["indicators"])
 )
 def read_indicators(
     reporting_period_id: int,
-    company: Company = Depends(get_owned_company),
+    company: Company = Depends(get_admin_company),
     db: Session = Depends(get_db),
 ) -> AssessmentResponse:
     period = get_owned_period(db, company, reporting_period_id)
