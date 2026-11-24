@@ -226,7 +226,32 @@ def test_dashboard_requires_authentication(client, company_with_period):
     assert client.get(f"/api/companies/{company['id']}/dashboard/{period['id']}").status_code == 401
 
 
-def test_thresholds_endpoint_lists_ten_indicators(client, auth_headers):
+def test_thresholds_endpoint_lists_ten_indicators(client, auth_headers, company_with_period):
+    # Thresholds are part of the scoring methodology: CEO / Admin only.
     response = client.get("/api/thresholds", headers=auth_headers)
     assert response.status_code == 200
     assert len(response.json()) == 10
+
+
+def test_a_one_percent_gap_is_rejected_with_the_exact_difference(
+    client, auth_headers, company_with_period
+):
+    # RM110,000 of assets against RM109,000 of liabilities plus equity passed
+    # the old 1% tolerance; it must now be rejected, and nothing is stored.
+    company, period = company_with_period
+    off = SOUND_COMPANY.model_copy(update={
+        "total_assets": 800_000, "total_liabilities": 300_000, "total_equity": 499_000,
+    })
+    response = client.post(
+        f"/api/companies/{company['id']}/financial-records",
+        json=as_request_payload(off, period["id"]),
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+    errors = " ".join(response.json()["detail"]["errors"])
+    assert "800,000.00" in errors and "799,000.00" in errors
+    assert "difference 1,000.00" in errors
+    records = client.get(
+        f"/api/companies/{company['id']}/financial-records", headers=auth_headers
+    ).json()
+    assert records == []

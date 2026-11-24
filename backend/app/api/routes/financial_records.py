@@ -1,10 +1,17 @@
 """Financial record routes."""
 
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_current_user, get_owned_company, get_owned_period
+from app.api.dependencies import (
+    company_for_member,
+    get_current_user,
+    get_owned_company,
+    get_owned_period,
+)
 from app.core.database import get_db
 from app.models.company import Company, ReportingPeriod
 from app.models.financial_record import FinancialRecord
@@ -15,20 +22,23 @@ from app.schemas.financial_record import (
     FinancialRecordUpdateRequest,
 )
 from app.services.validation_service import validate_financial_inputs
-from app.utils.records import get_current_record
+from app.services.audit_service import record_event
+from app.utils.records import commit_revision, get_current_record, lock_period
 
 router = APIRouter(tags=["financial records"])
 
 
-def _apply_values(record: FinancialRecord, payload) -> None:
-    """Copy statement values from a request payload onto a record."""
-    for field_name in (
+_FIELDS = (
         "revenue",
         "cost_of_goods_sold",
         "operating_expenses",
         "interest_expense",
         "tax_expense",
         "net_profit",
+        "other_operating_income",
+        "other_income",
+        "other_expenses",
+        "presentation_unit",
         "cash_and_equivalents",
         "accounts_receivable",
         "inventory",
@@ -37,7 +47,13 @@ def _apply_values(record: FinancialRecord, payload) -> None:
         "current_liabilities",
         "total_liabilities",
         "total_equity",
-    ):
+        "retained_earnings",
+    )
+
+
+def _apply_values(record: FinancialRecord, payload) -> None:
+    """Copy statement values from a request payload onto a record."""
+    for field_name in _FIELDS:
         setattr(record, field_name, getattr(payload, field_name))
 
 
@@ -50,6 +66,7 @@ def _apply_values(record: FinancialRecord, payload) -> None:
 def create_financial_record(
     payload: FinancialRecordCreateRequest,
     company: Company = Depends(get_owned_company),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> FinancialRecord:
     """Store financial statement values for one reporting period.
@@ -60,6 +77,7 @@ def create_financial_record(
     accepted. Non-blocking findings are stored as notes against the record.
     """
     period = get_owned_period(db, company, payload.reporting_period_id)
+    lock_period(db, period.id)
 
     if get_current_record(db, period.id) is not None:
         raise HTTPException(
@@ -68,7 +86,9 @@ def create_financial_record(
             "Use the update endpoint to store a correction.",
         )
 
-    validation = validate_financial_inputs(payload.to_financial_inputs())
+    validation = validate_financial_inputs(
+        payload.to_financial_inputs(), Decimal(str(payload.presentation_unit))
+    )
     if not validation.is_valid:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -81,10 +101,15 @@ def create_financial_record(
         is_current=True,
         accounting_identity_ok=validation.accounting_identity_ok,
         validation_notes=validation.notes,
+        created_by_user_id=current_user.id,
     )
     _apply_values(record, payload)
     db.add(record)
-    db.commit()
+    db.flush()
+    record_event(db, company_id=company.id, actor=current_user, action="record.created",
+                 entity_type="financial_record", entity_id=record.id,
+                 detail={"period": period.label, "revision": 1, "source": "statement"})
+    commit_revision(db)
     db.refresh(record)
     return record
 
@@ -133,19 +158,42 @@ def update_financial_record(
         )
 
     period = db.get(ReportingPeriod, record.reporting_period_id)
-    company = db.get(Company, period.company_id) if period else None
-    if company is None or company.owner_id != current_user.id:
+    try:
+        company_for_member(db, current_user, period.company_id)
+    except HTTPException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Financial record not found."
-        )
+        ) from exc
 
-    validation = validate_financial_inputs(payload.to_financial_inputs())
+    validation = validate_financial_inputs(
+        payload.to_financial_inputs(), Decimal(str(payload.presentation_unit))
+    )
     if not validation.is_valid:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={"message": "Financial data failed validation.", "errors": validation.errors},
         )
 
+    # Only the current revision can be corrected. Lock the period first and
+    # re-read, so a correction saved a moment ago by someone else is seen.
+    lock_period(db, period.id)
+    db.refresh(record)
+    if not record.is_current:
+        current = get_current_record(db, period.id)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Revision {record.revision} has been superseded by revision "
+            f"{current.revision if current else '?'}. Reload the latest figures and make "
+            "your correction to those.",
+        )
+
+    changed = {
+        name: {"from": float(getattr(record, name)) if getattr(record, name) is not None else None,
+               "to": getattr(payload, name)}
+        for name in _FIELDS
+        if (float(getattr(record, name)) if getattr(record, name) is not None else None)
+        != (float(getattr(payload, name)) if getattr(payload, name) is not None else None)
+    }
     record.is_current = False
     revision = FinancialRecord(
         reporting_period_id=record.reporting_period_id,
@@ -153,9 +201,16 @@ def update_financial_record(
         is_current=True,
         accounting_identity_ok=validation.accounting_identity_ok,
         validation_notes=validation.notes,
+        created_by_user_id=current_user.id,
     )
     _apply_values(revision, payload)
     db.add(revision)
-    db.commit()
+    db.flush()
+    record_event(db, company_id=period.company_id, actor=current_user,
+                 action="record.corrected", entity_type="financial_record",
+                 entity_id=revision.id,
+                 detail={"period": period.label, "from_revision": record.revision,
+                         "to_revision": revision.revision, "changed": changed})
+    commit_revision(db)
     db.refresh(revision)
     return revision

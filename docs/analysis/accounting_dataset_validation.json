@@ -1,0 +1,713 @@
+{
+  "pipeline": {
+    "file": "Financial_Statements_FY2017-18.xlsx",
+    "selected_sheet": "Trial Balance",
+    "sheets_examined": [
+      {
+        "name": "Inputs",
+        "table_found": false,
+        "rows": 0
+      },
+      {
+        "name": "Trial Balance",
+        "table_found": true,
+        "rows": 17
+      },
+      {
+        "name": "Trading Account",
+        "table_found": false,
+        "rows": 0
+      },
+      {
+        "name": "Profit & Loss",
+        "table_found": false,
+        "rows": 0
+      },
+      {
+        "name": "Balance Sheet",
+        "table_found": false,
+        "rows": 0
+      },
+      {
+        "name": "Cash Flow",
+        "table_found": false,
+        "rows": 0
+      }
+    ],
+    "header_row": 1,
+    "columns": {
+      "name": "Ledger",
+      "group": "Group",
+      "debit": "Debit",
+      "credit": "Credit"
+    },
+    "skipped_rows": [
+      19
+    ],
+    "import_errors": [],
+    "import_warnings": [],
+    "classification": [
+      {
+        "row": "row 2",
+        "ledger": "Cash & Bank",
+        "group": "Bank Accounts",
+        "debit": 3580064.53,
+        "credit": 0.0,
+        "category": "Cash and bank",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 3",
+        "ledger": "Accounts Receivable",
+        "group": "Sundry Debtors",
+        "debit": 0.0,
+        "credit": 0.0,
+        "category": "Trade receivables",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 4",
+        "ledger": "Inventory (Closing)",
+        "group": "Stock-in-Hand",
+        "debit": 0.0,
+        "credit": 0.0,
+        "category": "Inventory",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 5",
+        "ledger": "Input CGST",
+        "group": "Duties & Taxes",
+        "debit": 11887.17,
+        "credit": 0.0,
+        "category": "Other current asset",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 6",
+        "ledger": "Input SGST",
+        "group": "Duties & Taxes",
+        "debit": 11887.17,
+        "credit": 0.0,
+        "category": "Other current asset",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 7",
+        "ledger": "Input IGST",
+        "group": "Duties & Taxes",
+        "debit": 172840.14,
+        "credit": 0.0,
+        "category": "Other current asset",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 8",
+        "ledger": "Accounts Payable",
+        "group": "Sundry Creditors",
+        "debit": 0.0,
+        "credit": 0.0,
+        "category": "Current liability",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 9",
+        "ledger": "Output CGST",
+        "group": "Duties & Taxes",
+        "debit": 0.0,
+        "credit": 32481.91,
+        "category": "Current liability",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 10",
+        "ledger": "Output SGST",
+        "group": "Duties & Taxes",
+        "debit": 0.0,
+        "credit": 32481.91,
+        "category": "Current liability",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 11",
+        "ledger": "Output IGST",
+        "group": "Duties & Taxes",
+        "debit": 0.0,
+        "credit": 273881.74,
+        "category": "Current liability",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 12",
+        "ledger": "Sales Revenue (Net of GST)",
+        "group": "Sales Accounts",
+        "debit": 0.0,
+        "credit": 2430335.31,
+        "category": "Revenue",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 13",
+        "ledger": "Opening Stock",
+        "group": "Direct Expenses",
+        "debit": 491290.86,
+        "credit": 0.0,
+        "category": "Cost of sales",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 14",
+        "ledger": "Purchases (Taxable Portion)",
+        "group": "Purchase Accounts",
+        "debit": 1460006.65,
+        "credit": 0.0,
+        "category": "Cost of sales",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 15",
+        "ledger": "Freight Inward",
+        "group": "Direct Expenses",
+        "debit": 31810.22,
+        "credit": 0.0,
+        "category": "Cost of sales",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 16",
+        "ledger": "Round Off (Purchases)",
+        "group": "Direct Expenses",
+        "debit": 3.5,
+        "credit": 0.0,
+        "category": "Cost of sales",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 17",
+        "ledger": "Transportation Charges",
+        "group": "Indirect Expenses",
+        "debit": 498841.1,
+        "credit": 0.0,
+        "category": "Operating expense",
+        "basis": "account_group"
+      },
+      {
+        "row": "row 18",
+        "ledger": "Capital Account",
+        "group": "Capital",
+        "debit": 0.0,
+        "credit": 3489450.47,
+        "category": "Share capital and reserves",
+        "basis": "account_group"
+      }
+    ]
+  },
+  "derivation": {
+    "total_debit": 6258631.34,
+    "total_credit": 6258631.34,
+    "errors": [],
+    "warnings": [
+      "Opening stock is charged to cost of sales, but there is no closing stock (no closing stock credit and no inventory balance). Cost of goods sold then assumes everything was sold; check that closing stock was counted and posted."
+    ],
+    "figures": {
+      "revenue": 2430335.31,
+      "cost_of_goods_sold": 1983111.23,
+      "operating_expenses": 498841.1,
+      "interest_expense": 0,
+      "tax_expense": 0,
+      "cash_and_equivalents": 3580064.53,
+      "accounts_receivable": 0.0,
+      "inventory": 0.0,
+      "other_current_assets": 196614.48,
+      "non_current_assets": 0,
+      "current_liabilities": 338845.56,
+      "non_current_liabilities": 0,
+      "gross_profit": 447224.08,
+      "operating_profit": -51617.02,
+      "net_profit": -51617.02,
+      "current_assets": 3776679.01,
+      "total_assets": 3776679.01,
+      "total_liabilities": 338845.56,
+      "total_equity": 3437833.45,
+      "retained_earnings": null
+    }
+  },
+  "comparison": [
+    {
+      "item": "Revenue",
+      "key": "revenue",
+      "reference": 2430335.31,
+      "dashboard": 2430335.31,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Cost of goods sold",
+      "key": "cost_of_goods_sold",
+      "reference": 1983111.2299999997,
+      "dashboard": 1983111.23,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Gross profit",
+      "key": "gross_profit",
+      "reference": 447224.0800000003,
+      "dashboard": 447224.08,
+      "difference": -0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Operating expenses",
+      "key": "operating_expenses",
+      "reference": 498841.1,
+      "dashboard": 498841.1,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Operating profit",
+      "key": "operating_profit",
+      "reference": -51617.01999999967,
+      "dashboard": -51617.02,
+      "difference": -0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Interest expense",
+      "key": "interest_expense",
+      "reference": null,
+      "dashboard": 0,
+      "difference": null,
+      "result": "Not in reference"
+    },
+    {
+      "item": "Tax expense",
+      "key": "tax_expense",
+      "reference": null,
+      "dashboard": 0,
+      "difference": null,
+      "result": "Not in reference"
+    },
+    {
+      "item": "Net profit",
+      "key": "net_profit",
+      "reference": -51617.01999999967,
+      "dashboard": -51617.02,
+      "difference": -0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Cash and cash equivalents",
+      "key": "cash_and_equivalents",
+      "reference": 3580064.53,
+      "dashboard": 3580064.53,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Accounts receivable",
+      "key": "accounts_receivable",
+      "reference": 0.0,
+      "dashboard": 0.0,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Inventory",
+      "key": "inventory",
+      "reference": 0.0,
+      "dashboard": 0.0,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Other current assets (input GST)",
+      "key": "other_current_assets",
+      "reference": 196614.48,
+      "dashboard": 196614.48,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Current assets",
+      "key": "current_assets",
+      "reference": 3776679.01,
+      "dashboard": 3776679.01,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Non-current assets",
+      "key": "non_current_assets",
+      "reference": null,
+      "dashboard": 0,
+      "difference": null,
+      "result": "Not in reference"
+    },
+    {
+      "item": "Total assets",
+      "key": "total_assets",
+      "reference": 3776679.01,
+      "dashboard": 3776679.01,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Current liabilities",
+      "key": "current_liabilities",
+      "reference": 338845.56,
+      "dashboard": 338845.56,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Non-current liabilities",
+      "key": "non_current_liabilities",
+      "reference": null,
+      "dashboard": 0,
+      "difference": null,
+      "result": "Not in reference"
+    },
+    {
+      "item": "Total liabilities",
+      "key": "total_liabilities",
+      "reference": 338845.56,
+      "dashboard": 338845.56,
+      "difference": 0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Total equity",
+      "key": "total_equity",
+      "reference": 3437833.4500000007,
+      "dashboard": 3437833.45,
+      "difference": -0.0,
+      "result": "Pass"
+    },
+    {
+      "item": "Retained earnings",
+      "key": "retained_earnings",
+      "reference": null,
+      "dashboard": null,
+      "difference": null,
+      "result": "Not in reference"
+    },
+    {
+      "item": "Total liabilities and equity",
+      "key": "total_liabilities_and_equity",
+      "reference": 3776679.0100000007,
+      "dashboard": 3776679.01,
+      "difference": -0.0,
+      "result": "Pass"
+    }
+  ],
+  "scoring": {
+    "period_days": 365,
+    "validation_errors": [],
+    "validation_warnings": [],
+    "indicators": [
+      {
+        "indicator": "Current Ratio",
+        "code": "current_ratio",
+        "category": "liquidity",
+        "engine_value": 11.14572376276673,
+        "hand_value": 11.14572376276673,
+        "engine_score": 100.0,
+        "hand_score": 100.0,
+        "status": "sound",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Quick Ratio",
+        "code": "quick_ratio",
+        "category": "liquidity",
+        "engine_value": 11.14572376276673,
+        "hand_value": 11.14572376276673,
+        "engine_score": 100.0,
+        "hand_score": 100.0,
+        "status": "sound",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Gross Profit Margin",
+        "code": "gross_profit_margin",
+        "category": "profitability",
+        "engine_value": 18.4017439140939,
+        "hand_value": 18.4017439140939,
+        "engine_score": 56.8,
+        "hand_score": 56.8034878281878,
+        "status": "concern",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Net Profit Margin",
+        "code": "net_profit_margin",
+        "category": "profitability",
+        "engine_value": -2.123864134616058,
+        "hand_value": -2.123864134616058,
+        "engine_score": 31.5,
+        "hand_score": 31.504543461535768,
+        "status": "distress",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Return on Assets",
+        "code": "return_on_assets",
+        "category": "profitability",
+        "engine_value": -1.3667303962906818,
+        "hand_value": -1.3667303962906818,
+        "engine_score": 34.53,
+        "hand_score": 34.53307841483727,
+        "status": "distress",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Debt-to-Equity Ratio",
+        "code": "debt_to_equity",
+        "category": "solvency",
+        "engine_value": 0.09856369278156857,
+        "hand_value": 0.09856369278156857,
+        "engine_score": 100.0,
+        "hand_score": 100.0,
+        "status": "sound",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Debt Ratio",
+        "code": "debt_ratio",
+        "category": "solvency",
+        "engine_value": 0.08972050817736825,
+        "hand_value": 0.08972050817736825,
+        "engine_score": 100.0,
+        "hand_score": 100.0,
+        "status": "sound",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Interest Coverage Ratio",
+        "code": "interest_coverage",
+        "category": "solvency",
+        "engine_value": null,
+        "hand_value": null,
+        "engine_score": null,
+        "hand_score": null,
+        "status": "not_applicable",
+        "note": "No interest expense reported.",
+        "result": "Pass"
+      },
+      {
+        "indicator": "Asset Turnover",
+        "code": "asset_turnover",
+        "category": "efficiency",
+        "engine_value": 0.6435112180741037,
+        "hand_value": 0.6435112180741037,
+        "engine_score": 45.74,
+        "hand_score": 45.740448722964146,
+        "status": "concern",
+        "note": null,
+        "result": "Pass"
+      },
+      {
+        "indicator": "Days Sales Outstanding",
+        "code": "days_sales_outstanding",
+        "category": "efficiency",
+        "engine_value": 0.0,
+        "hand_value": 0.0,
+        "engine_score": 100.0,
+        "hand_score": 100.0,
+        "status": "sound",
+        "note": null,
+        "result": "Pass"
+      }
+    ],
+    "categories": [
+      {
+        "category": "liquidity",
+        "engine": 100.0,
+        "hand": 100.0,
+        "result": "Pass"
+      },
+      {
+        "category": "profitability",
+        "engine": 40.94,
+        "hand": 40.947036568186945,
+        "result": "Pass"
+      },
+      {
+        "category": "solvency",
+        "engine": 100.0,
+        "hand": 100.0,
+        "result": "Pass"
+      },
+      {
+        "category": "efficiency",
+        "engine": 72.87,
+        "hand": 72.87022436148207,
+        "result": "Pass"
+      }
+    ],
+    "overall": {
+      "engine": 78.45,
+      "hand": 78.45431523241726,
+      "classification": "sound",
+      "result": "Pass"
+    },
+    "benchmark": {
+      "available": false,
+      "value": null,
+      "missing_inputs": [
+        "retained_earnings"
+      ]
+    }
+  },
+  "vouchers": {
+    "vouchers_within_period": {
+      "Sales": true,
+      "Purchases": true,
+      "Receipts": true,
+      "Payments": true,
+      "Journal": true,
+      "Contra": true,
+      "Credit Notes": true,
+      "Debit Notes": true
+    },
+    "checks": [
+      {
+        "item": "Sales revenue",
+        "from_vouchers": 2430335.31,
+        "trial_balance": 2430335.31,
+        "finding": "Equals taxable value + freight charged + round-off. Credit notes (520,103.19, including sales returns) are not deducted.",
+        "difference": 0.0
+      },
+      {
+        "item": "Purchases (taxable portion)",
+        "from_vouchers": 1460006.65,
+        "trial_balance": 1460006.65,
+        "finding": "Matches. Debit notes (310,633.24, including purchase returns) are not deducted; imports on Bills of Entry (CIF 136,650.29 + duty 13,665.04) are not included.",
+        "difference": 0.0
+      },
+      {
+        "item": "Output GST (CGST + SGST + IGST)",
+        "from_vouchers": 338845.56,
+        "trial_balance": 338845.56,
+        "finding": "Matches, but output VAT (10,533.21) and CST (8,409.25) charged on pre-GST sales are missing from the trial balance although the VAT Payable and CST Payable ledgers exist.",
+        "difference": 0.0
+      },
+      {
+        "item": "Input GST (CGST + SGST + IGST)",
+        "from_vouchers": 196614.48,
+        "trial_balance": 196614.48,
+        "finding": "Matches. Input VAT (6,392.56) and CST (6,472.35) are missing; IGST paid on imports (27,056.75) is missing.",
+        "difference": 0.0
+      },
+      {
+        "item": "Freight inward",
+        "from_vouchers": 31810.22,
+        "trial_balance": 31810.22,
+        "finding": "Matches.",
+        "difference": 0.0
+      },
+      {
+        "item": "Opening stock",
+        "from_vouchers": 491290.86,
+        "trial_balance": 491290.86,
+        "finding": "Σ opening quantity × opening rate, rounded. It is charged to cost of sales, but there is no opening stock asset or matching capital entry, so it is absorbed by the capital plug.",
+        "difference": 0.0
+      },
+      {
+        "item": "Closing stock",
+        "from_vouchers": null,
+        "trial_balance": 0,
+        "finding": "Set to 0 in the reference. Quantities on hand by item (opening + purchases + imports − sales) are: Atta - 10kg Pack 3.05, Basmati Rice - 5kg -376.62, Ghee - 500ml 24.00, Masala Mix - 200g 427.74, Ragi Flour - 1kg 753.08, Sugar - 1kg -250.02, Sunflower Oil - 1L 779.82. Negative quantities mean more was sold than was ever held, and purchase and sale rates for the same item vary widely, so no defensible closing valuation exists.",
+        "difference": null
+      },
+      {
+        "item": "Cash and bank",
+        "from_vouchers": 3580064.53,
+        "trial_balance": 3580064.53,
+        "finding": "Equals all receipts − all payments. Contra entries net to zero. No opening balance is used, although the bank statement implies an opening bank balance of 500,000.00 and ends at -510,516.33; the bank statement and the vouchers do not reconcile.",
+        "difference": 0.0
+      },
+      {
+        "item": "Accounts receivable",
+        "from_vouchers": -18373914.61,
+        "trial_balance": 0,
+        "finding": "Opening debtors + invoices − credit notes − receipts. Receipts (21,554,465.98) are about 7.7 times the year's invoiced sales, so customers would have overpaid by millions. The reference sets receivables to 0 instead.",
+        "difference": -18373914.61
+      },
+      {
+        "item": "Accounts payable",
+        "from_vouchers": -14617986.89,
+        "trial_balance": 0,
+        "finding": "Opening creditors + invoices − debit notes − supplier payments, shown with the sign of a debit balance. Supplier payments are about 10 times purchases. The reference sets payables to 0 instead.",
+        "difference": -14617986.89
+      },
+      {
+        "item": "Transportation charges",
+        "from_vouchers": 498841.1,
+        "trial_balance": 498841.1,
+        "finding": "Payments to the Transportation Charges ledger. Other payments to non-supplier ledgers (Round Off 598,519.33) are in cash but not in any expense.",
+        "difference": 0.0
+      },
+      {
+        "item": "Capital account",
+        "from_vouchers": null,
+        "trial_balance": 3489450.47,
+        "finding": "Equals total debits − all other credits: a balancing figure, not a recorded capital amount.",
+        "difference": null
+      }
+    ],
+    "journal": {
+      "Depreciation": {
+        "count": 32,
+        "amount": 335747.83,
+        "example_postings": [
+          "Dr Input CGST / Cr Output CGST",
+          "Dr Input CGST / Cr Output IGST",
+          "Dr Input CGST / Cr Output SGST",
+          "Dr Input CGST / Cr VAT Payable"
+        ]
+      },
+      "Round Off Adjustment": {
+        "count": 25,
+        "amount": 202122.78,
+        "example_postings": [
+          "Dr Input CGST / Cr Output IGST",
+          "Dr Input CGST / Cr VAT Payable",
+          "Dr Input IGST / Cr Capital Account",
+          "Dr Input IGST / Cr Output IGST"
+        ]
+      },
+      "Accrued Income": {
+        "count": 31,
+        "amount": 302155.95,
+        "example_postings": [
+          "Dr Input CGST / Cr CST Payable",
+          "Dr Input CGST / Cr Output IGST",
+          "Dr Input CGST / Cr Output SGST",
+          "Dr Input CGST / Cr VAT Payable"
+        ]
+      },
+      "Provision Expense": {
+        "count": 32,
+        "amount": 303431.98,
+        "example_postings": [
+          "Dr Input CGST / Cr Output CGST",
+          "Dr Input CGST / Cr Output SGST",
+          "Dr Input IGST / Cr CST Payable",
+          "Dr Input IGST / Cr Capital Account"
+        ]
+      }
+    },
+    "opening_debtors": 912531.26,
+    "opening_creditors": 868387.65
+  }
+}

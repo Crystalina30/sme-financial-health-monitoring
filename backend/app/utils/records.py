@@ -61,3 +61,33 @@ def get_previous_indicator_values(
         indicator.code: indicator.value
         for indicator in calculate_indicators(record_to_inputs(previous_record))
     }
+
+
+def lock_period(db: Session, period_id: int) -> None:
+    """Serialise revisions of one period.
+
+    On PostgreSQL this takes a row lock on the reporting period until the
+    transaction ends, so two corrections of the same period are written one
+    after the other, each seeing the other's result. (SQLite, used in tests,
+    ignores FOR UPDATE; the unique index still prevents two current rows.)
+    """
+    from app.models.company import ReportingPeriod
+
+    db.execute(select(ReportingPeriod.id).where(ReportingPeriod.id == period_id).with_for_update())
+
+
+def commit_revision(db: Session) -> None:
+    """Commit a new revision, turning a lost race into a clear 409."""
+    from fastapi import HTTPException, status
+    from sqlalchemy.exc import IntegrityError
+
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Someone else saved this period's financial data at the same time. "
+            "Reload to see the latest revision, then make your change again.",
+        ) from exc
+

@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_current_user
+from app.api.dependencies import require_admin
 from app.core.database import get_db
 from app.models.threshold import ThresholdConfiguration
 from app.models.user import User
@@ -18,7 +18,7 @@ router = APIRouter(prefix="/thresholds", tags=["thresholds"])
 
 @router.get("", summary="List the configured indicator thresholds")
 def list_thresholds(
-    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+    current_user: User = Depends(require_admin), db: Session = Depends(get_db)
 ) -> list[dict]:
     rows = db.execute(
         select(ThresholdConfiguration)
@@ -33,7 +33,10 @@ def list_thresholds(
             "direction": row.direction,
             "concern_threshold": row.concern_threshold,
             "distress_threshold": row.distress_threshold,
+            "floor_value": row.floor_value,
+            "target_value": row.target_value,
             "source_reference": row.source_reference,
+            "basis": row.basis,
             "description": row.description,
         }
         for row in rows

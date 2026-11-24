@@ -9,6 +9,11 @@ often because a denominator is zero or a required value was not reported. It
 never means zero. The distinction matters because a category score is the
 average of its applicable indicators only, and treating a missing indicator as
 zero would understate the company's health.
+
+One case is different: debt-to-equity has no meaningful value when equity is
+zero or negative, but that is the *worst* solvency position, not a gap in the
+data. Dropping it would let the remaining solvency indicators average upwards,
+so it is marked ``worst_case`` and the scorer gives it the lowest score.
 """
 
 from dataclasses import dataclass
@@ -20,10 +25,7 @@ from app.models.enums import (
     IndicatorCategory,
     IndicatorCode,
 )
-from app.schemas.financial_inputs import FinancialInputs
-
-# Days used to annualise days sales outstanding.
-DAYS_IN_YEAR = 365
+from app.schemas.financial_inputs import DAYS_IN_YEAR, FinancialInputs
 
 # Denominators whose absolute value is below this are treated as zero, which
 # avoids both division-by-zero errors and meaningless very large ratios.
@@ -128,17 +130,28 @@ def calculate_interest_coverage(data: FinancialInputs) -> float | None:
 
 
 def calculate_asset_turnover(data: FinancialInputs) -> float | None:
-    """Revenue divided by total assets."""
-    return _safe_divide(data.revenue, data.total_assets)
+    """Annualised revenue divided by total assets.
+
+    Revenue covers the reporting period while total assets is a closing
+    balance, so revenue is scaled to a year: ``revenue * 365 / D``, where D is
+    the period length in days. For a full-year period this is plain revenue
+    divided by total assets. Closing rather than average assets are used
+    because opening balances are not recorded.
+    """
+    annual_revenue = data.revenue * DAYS_IN_YEAR / data.effective_period_days
+    return _safe_divide(annual_revenue, data.total_assets)
 
 
 def calculate_days_sales_outstanding(data: FinancialInputs) -> float | None:
     """Average number of days taken to collect receivables.
 
-    Accounts receivable divided by revenue, annualised over 365 days.
+    Closing accounts receivable divided by the period's revenue, times the
+    period length in days: receivables expressed as days of sales. Using the
+    period's own length means a quarterly or monthly period is not scaled as
+    though its revenue were a year's.
     """
     ratio = _safe_divide(data.accounts_receivable, data.revenue)
-    return None if ratio is None else ratio * DAYS_IN_YEAR
+    return None if ratio is None else ratio * data.effective_period_days
 
 
 # ---------------------------------------------------------------------------
@@ -166,7 +179,7 @@ NOT_APPLICABLE_NOTES = {
     IndicatorCode.GROSS_PROFIT_MARGIN: "No revenue reported.",
     IndicatorCode.NET_PROFIT_MARGIN: "No revenue reported.",
     IndicatorCode.RETURN_ON_ASSETS: "No total assets reported.",
-    IndicatorCode.DEBT_TO_EQUITY: "Equity is zero or negative.",
+    IndicatorCode.DEBT_TO_EQUITY: "Neither equity nor liabilities are reported.",
     IndicatorCode.DEBT_RATIO: "No total assets reported.",
     IndicatorCode.INTEREST_COVERAGE: "No interest expense reported.",
     IndicatorCode.ASSET_TURNOVER: "No total assets reported.",
@@ -185,6 +198,30 @@ class CalculatedIndicator:
     value: float | None
     is_applicable: bool
     note: str | None = None
+    # Set when the value is undefined because the position is as bad as it
+    # can be (equity at or below zero), rather than because data is missing.
+    worst_case: bool = False
+
+
+#: Shown when debt-to-equity is scored as the worst case.
+NEGATIVE_EQUITY_NOTE = (
+    "Equity is zero or negative, so liabilities exceed assets. The ratio is "
+    "undefined and is scored as the worst solvency position."
+)
+
+
+def _is_negative_equity_worst_case(code: IndicatorCode, data: FinancialInputs) -> bool:
+    """True when debt-to-equity is undefined because the company is insolvent.
+
+    Equity at or below zero with liabilities outstanding means liabilities are
+    at least equal to assets. With no liabilities either, there is simply
+    nothing to measure, and the indicator stays not applicable.
+    """
+    return (
+        code is IndicatorCode.DEBT_TO_EQUITY
+        and data.total_equity <= ZERO_TOLERANCE
+        and data.total_liabilities > ZERO_TOLERANCE
+    )
 
 
 def calculate_indicators(data: FinancialInputs) -> list[CalculatedIndicator]:
@@ -198,6 +235,11 @@ def calculate_indicators(data: FinancialInputs) -> list[CalculatedIndicator]:
     results: list[CalculatedIndicator] = []
     for code, function in INDICATOR_FUNCTIONS.items():
         value = function(data)
+        worst_case = value is None and _is_negative_equity_worst_case(code, data)
+        if worst_case:
+            note = NEGATIVE_EQUITY_NOTE
+        else:
+            note = None if value is not None else NOT_APPLICABLE_NOTES[code]
         results.append(
             CalculatedIndicator(
                 code=code,
@@ -205,8 +247,9 @@ def calculate_indicators(data: FinancialInputs) -> list[CalculatedIndicator]:
                 category=INDICATOR_CATEGORIES[code],
                 unit=INDICATOR_UNITS[code],
                 value=value,
-                is_applicable=value is not None,
-                note=None if value is not None else NOT_APPLICABLE_NOTES[code],
+                is_applicable=value is not None or worst_case,
+                note=note,
+                worst_case=worst_case,
             )
         )
     return results

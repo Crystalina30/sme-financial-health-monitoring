@@ -1,0 +1,75 @@
+{
+  "methodology_version": "2.0",
+  "caveat": "Stability under these changes is not evidence that the score is valid; that requires comparison with actual financial outcomes.",
+  "datasets": {
+    "CrystalCorps FY2025": {
+      "baseline_score": 73.02,
+      "baseline_classification": "sound",
+      "scenarios_run": 40,
+      "scenarios_skipped": 0,
+      "minimum_score": 68.44,
+      "maximum_score": 78.51,
+      "classification_changes": 0,
+      "scenarios_changing_classification": [],
+      "most_influential": [
+        {
+          "scenario": "all thresholds -20%",
+          "change": 5.49
+        },
+        {
+          "scenario": "efficiency weighted double",
+          "change": 5.39
+        },
+        {
+          "scenario": "liquidity weighted double",
+          "change": -4.58
+        },
+        {
+          "scenario": "all thresholds +20%",
+          "change": -2.87
+        },
+        {
+          "scenario": "without gross_profit_margin",
+          "change": -2.56
+        }
+      ],
+      "stability": "stable: no scenario changed the classification"
+    },
+    "CrystalCorps FY2024": {
+      "baseline_score": 47.25,
+      "baseline_classification": "vulnerable",
+      "scenarios_run": 40,
+      "scenarios_skipped": 0,
+      "minimum_score": 37.88,
+      "maximum_score": 55.29,
+      "classification_changes": 2,
+      "scenarios_changing_classification": [
+        "efficiency weighted double",
+        "geometric mean"
+      ],
+      "most_influential": [
+        {
+          "scenario": "geometric mean",
+          "change": -9.37
+        },
+        {
+          "scenario": "without gross_profit_margin",
+          "change": 8.04
+        },
+        {
+          "scenario": "efficiency weighted double",
+          "change": -7.44
+        },
+        {
+          "scenario": "without interest_coverage",
+          "change": 5.95
+        },
+        {
+          "scenario": "all thresholds -20%",
+          "change": 5.83
+        }
+      ],
+      "stability": "2 of 40 scenarios changed the classification"
+    }
+  }
+}

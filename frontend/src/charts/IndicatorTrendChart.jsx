@@ -1,12 +1,14 @@
 import ReactECharts from 'echarts-for-react';
 
-import { axisDefaults, baseGrid, baseTextStyle, SERIES_COLOUR } from './chartTheme.js';
+import { baseGrid, useChartTheme } from './chartTheme.js';
 
 /**
  * One indicator's value across reporting periods, with its two thresholds
  * drawn as reference lines so the trajectory can be read against them.
  */
 export default function IndicatorTrendChart({ points, threshold, indicatorName }) {
+  const { colours, textStyle, tooltip, referenceLine, axis } = useChartTheme();
+
   const markLines = threshold
     ? [
         { yAxis: threshold.concern_threshold, name: 'Concern' },
@@ -15,28 +17,25 @@ export default function IndicatorTrendChart({ points, threshold, indicatorName }
     : [];
 
   const option = {
-    textStyle: baseTextStyle,
+    textStyle,
     grid: baseGrid,
-    tooltip: { trigger: 'axis' },
+    tooltip: { ...tooltip, trigger: 'axis' },
     xAxis: {
       type: 'category',
       data: points.map((point) => point.label),
-      ...axisDefaults(),
+      ...axis(),
       splitLine: { show: false },
     },
-    yAxis: { type: 'value', ...axisDefaults(indicatorName) },
+    yAxis: { type: 'value', ...axis(indicatorName) },
     series: [
       {
         type: 'line',
         data: points.map((point) => point.value),
-        symbolSize: 7,
-        lineStyle: { width: 2, color: SERIES_COLOUR },
-        itemStyle: { color: SERIES_COLOUR },
+        symbolSize: 8,
+        lineStyle: { width: 2, color: colours.series },
+        itemStyle: { color: colours.series, borderColor: colours.markRing, borderWidth: 2 },
         markLine: {
-          silent: true,
-          symbol: 'none',
-          label: { formatter: '{b}', fontSize: 10, color: '#7a8599' },
-          lineStyle: { type: 'dashed', color: '#c9d2e0' },
+          ...referenceLine,
           data: markLines,
         },
       },

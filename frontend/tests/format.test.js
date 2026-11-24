@@ -37,3 +37,12 @@ describe('formatScore', () => {
     expect(formatScore(72.456)).toBe('72.5');
   });
 });
+
+describe('exact amounts', () => {
+  it('adds typed amounts in whole cents without floating-point drift', async () => {
+    const { toCents, formatAmount } = await import('../src/utils/format.js');
+    expect(toCents('60000') + toCents('49999.99')).toBe(toCents('109999.99'));
+    expect(toCents('0.1') + toCents('0.2')).toBe(toCents('0.3'));
+    expect(formatAmount(109999.99)).toBe('109,999.99');
+  });
+});

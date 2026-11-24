@@ -93,7 +93,6 @@ export default function AuthField({
           </span>
           <input
             id={id}
-            name={id}
             type={revealable && revealed ? 'text' : type}
             className={`auth-input${revealable ? ' auth-input--with-toggle' : ''}`}
             placeholder={label}

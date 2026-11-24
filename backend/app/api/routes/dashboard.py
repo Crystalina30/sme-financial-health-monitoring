@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_owned_company, get_owned_period
+from app.api.dependencies import get_admin_company, get_owned_period
 from app.core.database import get_db
 from app.models.company import Company, ReportingPeriod
 from app.schemas.assessment import DashboardResponse, TrendPoint
@@ -17,6 +17,7 @@ from app.utils.presenters import (
     build_assessment_response,
     build_financial_summary,
     record_to_inputs,
+    reliability_for,
 )
 from app.utils.records import get_current_record, get_previous_indicator_values
 
@@ -50,6 +51,7 @@ def _build_score_trend(db: Session, company: Company) -> list[TrendPoint]:
                 period_end=period.period_end.isoformat(),
                 overall_score=output.assessment.overall_score,
                 classification=output.assessment.classification,
+                assessment_status=reliability_for(record, output).status,
             )
         )
     return trend
@@ -62,7 +64,7 @@ def _build_score_trend(db: Session, company: Company) -> list[TrendPoint]:
 )
 def read_dashboard(
     reporting_period_id: int,
-    company: Company = Depends(get_owned_company),
+    company: Company = Depends(get_admin_company),
     db: Session = Depends(get_db),
 ) -> DashboardResponse:
     period = get_owned_period(db, company, reporting_period_id)
